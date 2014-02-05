@@ -3,6 +3,9 @@ import java.io.*;
 PGraphics canvas;
 String folderPath; 
 
+
+
+
 int max_width = 8192;
 int max_height = 8192;
 
