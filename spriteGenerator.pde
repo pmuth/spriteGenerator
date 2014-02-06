@@ -14,6 +14,7 @@ int image_width = 0;
 int image_height = 0;
 
 int numSequences = 8;
+int sequence;
 
 int startImage=0;
 int endImage=114;
@@ -60,13 +61,14 @@ ArrayList<File> findSubDirectories(File dir)
 
 //For loop that generates all the canvases
 void drawCanvases(File selection) {
- 
+    int canvasCounter = 0;
     subDirectories = findSubDirectories(selection);
     
     for (int i = 0; i < subDirectories.size(); i++) {   
       images=getWidthHeight(subDirectories.get(i));
       for (int j = 0; j < numSequences; j++) {
-      selectSequence(j+1);
+      sequence = j+1;
+      selectSequence(sequence);
       println(startImage + "  " + endImage);
       totalImages = (endImage-startImage)/2;
       xPositions = max_width/image_width;
@@ -75,9 +77,12 @@ void drawCanvases(File selection) {
       canvas.add(createGraphics(xPositions*image_width, yPositions*image_height));
       println(canvas.size());
       println("Generating sprite for " + folderPath);
-      drawImage(canvas.get(i));
-      println("Saving " + image_width+"_"+image_height+"_Sequence_"+(j+1)+".png");
-      canvas.get(i).save("output/"+ image_width+"_"+image_height+"_Sequence_"+(j+1)+".png");
+      drawImage(canvas.get(0));
+//      println("Saving " + image_width+"_"+image_height+"_Sequence_"+(j+1)+".png");
+//      canvas.get(i).save("output/"+ image_width+"_"+image_height+"_Sequence_"+(j+1)+".png");
+      canvas.remove(0);
+      canvasCounter++;
+
     }
   } 
 }
@@ -122,7 +127,10 @@ void drawImage(PGraphics spriteCanvas) {
 //    if (counter > endImage) {
 //      counter = startImage;
 //    }
-  } 
+  }
+      println("Saving " + image_width+"_"+image_height+"_Sequence_"+sequence+".png");
+      spriteCanvas.save("output/"+ image_width+"_"+image_height+"_Sequence_"+sequence+".png");
+  
 }
 
 void addImage(int xImage, int yImage, PGraphics canvas) {
