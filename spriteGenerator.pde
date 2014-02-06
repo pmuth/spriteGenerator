@@ -15,10 +15,6 @@ int image_height = 0;
 
 int numSequences = 8;
 
-//int startImage = 435;
-//int endImage = 481;
-//int totalImages = (endImage-startImage)/2;
-
 int startImage, endImage, totalImages;
 
 int xPositions, yPositions;
@@ -75,8 +71,8 @@ void drawCanvases(File selection) {
       canvas.add(createGraphics(xPositions*image_width, yPositions*image_height));
       println("Generating sprite for " + folderPath);
       drawImage(canvas.get(i));
-      //println("Saving " + image_width+"_"+image_height+"_Sequence_" +(j+1)+".png");
-      //canvas.get(i).save("output/"+ image_width+"_"+image_height+"_Sequence_" + (j+1)+".png");
+      println("Saving " + image_width+"_"+image_height+"_Sequence_" +(j+1)+".png");
+      canvas.get(i).save("output/"+ image_width+"_"+image_height+"_Sequence_" + (j+1)+".png");
       }
     } 
   
