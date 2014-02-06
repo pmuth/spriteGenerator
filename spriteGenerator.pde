@@ -16,9 +16,7 @@ int image_height = 0;
 int numSequences = 8;
 int sequence;
 
-int startImage=0;
-int endImage=114;
-int totalImages;
+int startImage, endImage, totalImages;
 
 int xPositions, yPositions;
 
@@ -63,28 +61,27 @@ ArrayList<File> findSubDirectories(File dir)
 void drawCanvases(File selection) {
     int canvasCounter = 0;
     subDirectories = findSubDirectories(selection);
-    
     for (int i = 0; i < subDirectories.size(); i++) {   
       images=getWidthHeight(subDirectories.get(i));
       for (int j = 0; j < numSequences; j++) {
       sequence = j+1;
       selectSequence(sequence);
-      println(startImage + "  " + endImage);
       totalImages = (endImage-startImage)/2;
       xPositions = max_width/image_width;
       yPositions = (totalImages/xPositions)+1;
-      println(xPositions*image_width+"    " +yPositions*image_height);
       canvas.add(createGraphics(xPositions*image_width, yPositions*image_height));
-      println(canvas.size());
-      println("Generating sprite for " + folderPath);
+      println("Rendering sprite for " + folderPath);
       drawImage(canvas.get(0));
-//      println("Saving " + image_width+"_"+image_height+"_Sequence_"+(j+1)+".png");
-//      canvas.get(i).save("output/"+ image_width+"_"+image_height+"_Sequence_"+(j+1)+".png");
       canvas.remove(0);
       canvasCounter++;
+      float totalRenders = subDirectories.size()*numSequences;
+      float sequencesRenderedPercentage = (float(canvasCounter)/(subDirectories.size()*(float(numSequences))))*100;
+      println(canvasCounter + " of " + totalRenders + " (" + sequencesRenderedPercentage + "%) sprites have been rendered");
 
     }
-  } 
+  }
+  println("DONE");
+   
 }
 
 //Find width & height of images in a directory
@@ -123,13 +120,10 @@ void drawImage(PGraphics spriteCanvas) {
     addJSON(xPosition, yPosition, i);
     
     counter+=2;
-    //println(counter);
-//    if (counter > endImage) {
-//      counter = startImage;
-//    }
   }
       println("Saving " + image_width+"_"+image_height+"_Sequence_"+sequence+".png");
-      spriteCanvas.save("output/"+ image_width+"_"+image_height+"_Sequence_"+sequence+".png");
+      //spriteCanvas.save("output/"+ image_width+"_"+image_height+"_Sequence_"+sequence+".png");
+      println("Saved");
   
 }
 
@@ -176,42 +170,34 @@ void selectSequence(int sequence) {
      case 1: 
              startImage = 0;
              endImage = 114;
-//             totalImages = (endImage-startImage)/2;
              break;
      case 2: 
              startImage = 123;
              endImage =  209;
-//             totalImages = (endImage-startImage)/2;
              break;
      case 3: 
              startImage = 218;
              endImage = 250;
-//             totalImages = (endImage-startImage)/2;
              break;
      case 4: 
              startImage = 260;
              endImage = 308;
-//             totalImages = (endImage-startImage)/2;
              break;
     case 5: 
              startImage = 319;
              endImage = 369;
-//             totalImages = (endImage-startImage)/2;
              break;
     case 6: 
              startImage = 378;
              endImage = 426;
-//             totalImages = (endImage-startImage)/2;
              break;
     case 7: 
              startImage = 435;
              endImage = 481;
-//             totalImages = (endImage-startImage)/2;
              break;
      case 8: 
              startImage = 490;
              endImage = 588;
-//             totalImages = (endImage-startImage)/2;
              break;
 
    } 
