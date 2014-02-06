@@ -13,9 +13,13 @@ int max_height = 8192;
 int image_width = 0;
 int image_height = 0;
 
-int startImage = 435;
-int endImage = 481;
-int totalImages = (endImage-startImage)/2;
+int numSequences = 8;
+
+//int startImage = 435;
+//int endImage = 481;
+//int totalImages = (endImage-startImage)/2;
+
+int startImage, endImage, totalImages;
 
 int xPositions, yPositions;
 
@@ -63,13 +67,17 @@ void drawCanvases(File selection) {
     
     for (int i = 0; i < subDirectories.size(); i++) {   
       images=getWidthHeight(subDirectories.get(i));
+      for (int j = 0; j < numSequences; j++) {
+      selectSequence(j+1);
+      println(startImage + "  " + endImage);
       xPositions = max_width/image_width;
       yPositions = (totalImages/xPositions)+1;
       canvas.add(createGraphics(xPositions*image_width, yPositions*image_height));
       println("Generating sprite for " + folderPath);
       drawImage(canvas.get(i));
-      println("Saving " + image_width+"_"+image_height+"_Step02.png");
-      //canvas.get(i).save(image_width+"_"+image_height+"_Step02.png");
+      //println("Saving " + image_width+"_"+image_height+"_Sequence_" +(j+1)+".png");
+      //canvas.get(i).save("output/"+ image_width+"_"+image_height+"_Sequence_" + (j+1)+".png");
+      }
     } 
   
 }
@@ -102,6 +110,8 @@ void drawImage(PGraphics spriteCanvas) {
   int xPosition = 0;
   int yPosition = 0;
   
+  totalImages = (endImage-startImage)/2;
+  counter = startImage;
   for (int i = 0; i <= totalImages; i++) {
     yPosition = (i/xPositions)*image_height;
     xPosition = (i%xPositions)*image_width;
@@ -110,7 +120,7 @@ void drawImage(PGraphics spriteCanvas) {
     
     counter+=2;
     if (counter > endImage) {
-      counter = startImage;
+      //counter = startImage;
     }
   } 
 }
@@ -150,6 +160,56 @@ void addJSON(int xJSON, int yJSON, int counter) {
     coordinates.setJSONArray(counter, tempCoordinates);
 
 }
+
+void selectSequence(int sequence) {
+ 
+   switch(sequence) {
+    
+     case 1: 
+             startImage = 0;
+             endImage = 114;
+//             totalImages = (endImage-startImage)/2;
+             break;
+     case 2: 
+             startImage = 123;
+             endImage =  209;
+//             totalImages = (endImage-startImage)/2;
+             break;
+     case 3: 
+             startImage = 218;
+             endImage = 250;
+//             totalImages = (endImage-startImage)/2;
+             break;
+     case 4: 
+             startImage = 260;
+             endImage = 308;
+//             totalImages = (endImage-startImage)/2;
+             break;
+    case 5: 
+             startImage = 319;
+             endImage = 369;
+//             totalImages = (endImage-startImage)/2;
+             break;
+    case 6: 
+             startImage = 378;
+             endImage = 426;
+//             totalImages = (endImage-startImage)/2;
+             break;
+    case 7: 
+             startImage = 435;
+             endImage = 481;
+//             totalImages = (endImage-startImage)/2;
+             break;
+     case 8: 
+             startImage = 490;
+             endImage = 588;
+//             totalImages = (endImage-startImage)/2;
+             break;
+
+   } 
+  
+}
+
 
 
 
