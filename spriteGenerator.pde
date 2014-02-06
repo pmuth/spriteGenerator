@@ -15,7 +15,9 @@ int image_height = 0;
 
 int numSequences = 8;
 
-int startImage, endImage, totalImages;
+int startImage=0;
+int endImage=114;
+int totalImages;
 
 int xPositions, yPositions;
 
@@ -66,16 +68,18 @@ void drawCanvases(File selection) {
       for (int j = 0; j < numSequences; j++) {
       selectSequence(j+1);
       println(startImage + "  " + endImage);
+      totalImages = (endImage-startImage)/2;
       xPositions = max_width/image_width;
       yPositions = (totalImages/xPositions)+1;
+      println(xPositions*image_width+"    " +yPositions*image_height);
       canvas.add(createGraphics(xPositions*image_width, yPositions*image_height));
+      println(canvas.size());
       println("Generating sprite for " + folderPath);
       drawImage(canvas.get(i));
-      println("Saving " + image_width+"_"+image_height+"_Sequence_" +(j+1)+".png");
-      canvas.get(i).save("output/"+ image_width+"_"+image_height+"_Sequence_" + (j+1)+".png");
-      }
-    } 
-  
+      println("Saving " + image_width+"_"+image_height+"_Sequence_"+(j+1)+".png");
+      canvas.get(i).save("output/"+ image_width+"_"+image_height+"_Sequence_"+(j+1)+".png");
+    }
+  } 
 }
 
 //Find width & height of images in a directory
@@ -106,7 +110,6 @@ void drawImage(PGraphics spriteCanvas) {
   int xPosition = 0;
   int yPosition = 0;
   
-  totalImages = (endImage-startImage)/2;
   counter = startImage;
   for (int i = 0; i <= totalImages; i++) {
     yPosition = (i/xPositions)*image_height;
@@ -115,9 +118,10 @@ void drawImage(PGraphics spriteCanvas) {
     addJSON(xPosition, yPosition, i);
     
     counter+=2;
-    if (counter > endImage) {
-      //counter = startImage;
-    }
+    //println(counter);
+//    if (counter > endImage) {
+//      counter = startImage;
+//    }
   } 
 }
 
