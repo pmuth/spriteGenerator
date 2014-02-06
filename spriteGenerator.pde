@@ -10,8 +10,7 @@ String[] images;
 int max_width = 8192;
 int max_height = 8192;
 
-int image_width = 0;
-int image_height = 0;
+int image_width, image_height;
 
 int numSequences = 8;
 int sequence;
@@ -22,12 +21,11 @@ int xPositions, yPositions;
 
 int counter = startImage;
 
-JSONArray coordinates = new JSONArray();
+String jsonRender; 
 
 void setup() {
   
   selectFolder("Select a folder to process:", "folderSelected");
-  //saveJSONArray(coordinates, "output/" +image_width+"x"+image_height + ".json");
   
 }
 
@@ -63,6 +61,11 @@ void drawCanvases(File selection) {
     subDirectories = findSubDirectories(selection);
     for (int i = 0; i < subDirectories.size(); i++) {   
       images=getWidthHeight(subDirectories.get(i));
+      
+      String[] jsonOutput = new String[0];
+      jsonOutput = append(jsonOutput, "[");
+      saveStrings("nouns.json", jsonOutput);
+        
       for (int j = 0; j < numSequences; j++) {
       sequence = j+1;
       selectSequence(sequence);
@@ -77,8 +80,15 @@ void drawCanvases(File selection) {
       float totalRenders = subDirectories.size()*numSequences;
       float sequencesRenderedPercentage = (float(canvasCounter)/(subDirectories.size()*(float(numSequences))))*100;
       println(canvasCounter + " of " + totalRenders + " (" + sequencesRenderedPercentage + "%) sprites have been rendered");
-
+      if (j < numSequences-1) {
+       jsonRender = jsonRender + ","; 
+      }
+      
+      jsonOutput = append(jsonOutput, jsonRender);
+ 
     }
+    jsonOutput = append(jsonOutput, "]");
+    saveStrings("output/json/" + image_width + "_"+ image_height + ".json", jsonOutput);
   }
   println("DONE");
    
@@ -111,19 +121,27 @@ String[] getWidthHeight(File selection) {
 void drawImage(PGraphics spriteCanvas) {
   int xPosition = 0;
   int yPosition = 0;
-  
   counter = startImage;
+ 
+  jsonRender = "[";
+  
   for (int i = 0; i <= totalImages; i++) {
     yPosition = (i/xPositions)*image_height;
     xPosition = (i%xPositions)*image_width;
     addImage(xPosition, yPosition, spriteCanvas);
-    addJSON(xPosition, yPosition, i);
-    
+    jsonRender = jsonRender + "[" + xPosition + "," + yPosition + "]";
     counter+=2;
+    
+    if (i < totalImages) {
+    jsonRender = jsonRender+ ",";
+    }
   }
+      jsonRender = jsonRender + "]";
+      println(jsonRender);
       println("Saving " + image_width+"_"+image_height+"_Sequence_"+sequence+".png");
-      //spriteCanvas.save("output/"+ image_width+"_"+image_height+"_Sequence_"+sequence+".png");
+      //spriteCanvas.save("output/sprites/"+ image_width+"_"+image_height+"_Sequence_"+sequence+".png");
       println("Saved");
+
   
 }
 
@@ -151,16 +169,6 @@ void addImage(int xImage, int yImage, PGraphics canvas) {
         canvas.image(img, 0, 0);
         canvas.popMatrix();
         canvas.endDraw();
-}
-
-void addJSON(int xJSON, int yJSON, int counter) {
-  
-    JSONArray tempCoordinates = new JSONArray();
-    tempCoordinates = new JSONArray();
-    tempCoordinates.setInt(0, xJSON);
-    tempCoordinates.setInt(1, yJSON);
-    coordinates.setJSONArray(counter, tempCoordinates);
-
 }
 
 void selectSequence(int sequence) {
