@@ -21,6 +21,8 @@ int xPositions, yPositions;
 
 int counter = startImage;
 
+int frameRateSpeed = 2;        //Drops ever Nth frame
+
 String jsonRender; 
 
 void setup() {
@@ -59,27 +61,43 @@ ArrayList<File> findSubDirectories(File dir)
 void drawCanvases(File selection) {
     int canvasCounter = 0;
     subDirectories = findSubDirectories(selection);
+    
+    //Cycling through directories
     for (int i = 0; i < subDirectories.size(); i++) {   
+      
+      //Get width/height of images in directory
       images=getWidthHeight(subDirectories.get(i));
       
+      //Begin creating JSON
       String[] jsonOutput = new String[0];
       jsonOutput = append(jsonOutput, "[");
       saveStrings("nouns.json", jsonOutput);
-        
+      
+      //Cycling through sequences
       for (int j = 0; j < numSequences; j++) {
       sequence = j+1;
       selectSequence(sequence);
-      totalImages = (endImage-startImage)/2;
+      
+      //Determine height and width of sprite
+      totalImages = (endImage-startImage)/frameRateSpeed;
       xPositions = max_width/image_width;
       yPositions = (totalImages/xPositions)+1;
       canvas.add(createGraphics(xPositions*image_width, yPositions*image_height));
       println("Rendering sprite for " + folderPath);
+      
+      //Draw sprite
       drawImage(canvas.get(0));
+      
+      //Delete sprite (otherwise sketch will run out of memory)
       canvas.remove(0);
+      
+      //Determine how many sprites have been rendered 
       canvasCounter++;
       float totalRenders = subDirectories.size()*numSequences;
       float sequencesRenderedPercentage = (float(canvasCounter)/(subDirectories.size()*(float(numSequences))))*100;
       println(canvasCounter + " of " + totalRenders + " (" + sequencesRenderedPercentage + "%) sprites have been rendered");
+      
+      //Add comma after sequence array
       if (j < numSequences-1) {
        jsonRender = jsonRender + ","; 
       }
@@ -87,6 +105,8 @@ void drawCanvases(File selection) {
       jsonOutput = append(jsonOutput, jsonRender);
  
     }
+    
+    //Close array and save JSON
     jsonOutput = append(jsonOutput, "]");
     saveStrings("output/json/" + image_width + "_"+ image_height + ".json", jsonOutput);
   }
@@ -130,7 +150,7 @@ void drawImage(PGraphics spriteCanvas) {
     xPosition = (i%xPositions)*image_width;
     addImage(xPosition, yPosition, spriteCanvas);
     jsonRender = jsonRender + "[" + xPosition + "," + yPosition + "]";
-    counter+=2;
+    counter+=frameRateSpeed;
     
     if (i < totalImages) {
     jsonRender = jsonRender+ ",";
@@ -149,9 +169,10 @@ void addImage(int xImage, int yImage, PGraphics canvas) {
   
         PImage img;
         int numberImage = counter;
+        
+        //Determine file name for image being added
         if (counter < 10) {
         img = loadImage(folderPath+"/"+image_width+"x"+image_height+"_Full_Render_0000"+numberImage+".png");
-        
         println("Adding " + image_width+"x"+image_height+"_Full_Render_0000"+numberImage+".png"); 
         }
         else if (counter < 100) {
@@ -159,10 +180,11 @@ void addImage(int xImage, int yImage, PGraphics canvas) {
         println("Adding " + image_width+"x"+image_height+"_Full_Render_000"+numberImage+".png"); 
         }
         else {
-         
         img = loadImage(folderPath+"/"+image_width+"x"+image_height+"_Full_Render_00"+numberImage+".png");
         println("Adding " + image_width+"x"+image_height+"_Full_Render_00"+numberImage+".png"); 
         }
+        
+        //Draw image on PGraphic
         canvas.beginDraw();
         canvas.pushMatrix();
         canvas.translate(xImage, yImage);
@@ -171,6 +193,7 @@ void addImage(int xImage, int yImage, PGraphics canvas) {
         canvas.endDraw();
 }
 
+//Switch statement to determine starting and ending image
 void selectSequence(int sequence) {
  
    switch(sequence) {
