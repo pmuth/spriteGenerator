@@ -111,6 +111,7 @@ void drawCanvases(File selection) {
     saveStrings("output/json/" + image_width + "_"+ image_height + ".json", jsonOutput);
   }
   println("DONE");
+  exit();
    
 }
 
@@ -157,7 +158,8 @@ void drawImage(PGraphics spriteCanvas) {
     }
   }
       jsonRender = jsonRender + "]";
-      println(jsonRender);
+      
+      println("Outputting Sequence " + sequence + " JSON");
       println("Saving " + image_width+"_"+image_height+"_Sequence_"+sequence+".png");
       //spriteCanvas.save("output/sprites/"+ image_width+"_"+image_height+"_Sequence_"+sequence+".png");
       println("Saved");
