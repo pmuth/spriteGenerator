@@ -23,10 +23,13 @@ int counter = startImage;
 
 int frameRateSpeed = 2;        //Drops ever Nth frame
 
-String jsonRender; 
+String jsonRender;
+
+boolean sequencesYesNo = false;
 
 void setup() {
   
+  println(sequencesYesNo);
   selectFolder("Select a folder to process:", "folderSelected");
   
 }
@@ -36,8 +39,12 @@ void folderSelected(File selection) {
     println("Window was closed or the user hit cancel.");
   } else {
     println("User selected " + selection.getAbsolutePath());    
+    if (sequencesYesNo) {
     drawCanvases(selection);
-
+    }
+    else {
+    drawCanvasesNoSequence(selection);
+    }
   }
 }
 
@@ -67,21 +74,19 @@ void drawCanvases(File selection) {
       
       //Get width/height of images in directory
       images=getWidthHeight(subDirectories.get(i));
-      
+     
       //Begin creating JSON
       String[] jsonOutput = new String[0];
       jsonOutput = append(jsonOutput, "[");
-      saveStrings("nouns.json", jsonOutput);
-      
+     
+    
       //Cycling through sequences
       for (int j = 0; j < numSequences; j++) {
       sequence = j+1;
       selectSequence(sequence);
       
-      //Determine height and width of sprite
-      totalImages = (endImage-startImage)/frameRateSpeed;
-      xPositions = max_width/image_width;
-      yPositions = (totalImages/xPositions)+1;
+      //Determine width and height of sprite
+      getWidthHeightSprite();
       canvas.add(createGraphics(xPositions*image_width, yPositions*image_height));
       println("Rendering sprite for " + folderPath);
       
@@ -115,6 +120,46 @@ void drawCanvases(File selection) {
    
 }
 
+void drawCanvasesNoSequence(File selection) {
+    int canvasCounter = 0;
+    subDirectories = findSubDirectories(selection);
+    
+    //Cycling through directories
+    for (int i = 0; i < subDirectories.size(); i++) {   
+      
+      //Get width/height of images in directory
+      images=getWidthHeight(subDirectories.get(i));
+     
+      //Begin creating JSON
+      String[] jsonOutput = new String[0];
+    
+      //Determine width and height of sprite
+      getWidthHeightSprite();
+      canvas.add(createGraphics(xPositions*image_width, yPositions*image_height));
+      println("Rendering sprite for " + folderPath);
+      
+      //Draw sprite
+      drawImage(canvas.get(0));
+      
+      //Delete sprite (otherwise sketch will run out of memory)
+      canvas.remove(0);
+      
+      //Determine how many sprites have been rendered 
+      canvasCounter++;
+      float sequencesRenderedPercentage = (float(canvasCounter)/(subDirectories.size()))*100;
+      println(canvasCounter + " of " + subDirectories.size() + " (" + sequencesRenderedPercentage + "%) sprites have been rendered");
+      
+      //Add comma after sequence array
+      jsonOutput = append(jsonOutput, jsonRender);
+
+    //Close array and save JSON
+    saveStrings("output/json/" + image_width + "_"+ image_height + ".json", jsonOutput);
+  }
+  println("DONE");
+  exit();
+   
+}
+
 //Find width & height of images in a directory
 String[] getWidthHeight(File selection) {
   // set target folder
@@ -131,6 +176,11 @@ String[] getWidthHeight(File selection) {
   
   // list files in target folder, passing the filter as parameter
   String[] filenames = folder.list(pngFilter);
+  
+  if (sequencesYesNo == false) {
+   endImage = filenames.length-1;
+  println(endImage); 
+  }
   
   PImage resolution = loadImage(path+"/"+filenames[0]);
   image_height = resolution.height;
@@ -159,9 +209,17 @@ void drawImage(PGraphics spriteCanvas) {
   }
       jsonRender = jsonRender + "]";
       
+      
+      if (sequencesYesNo) {
       println("Outputting Sequence " + sequence + " JSON");
       println("Saving " + image_width+"_"+image_height+"_Sequence_"+sequence+".png");
-      //spriteCanvas.save("output/sprites/"+ image_width+"_"+image_height+"_Sequence_"+sequence+".png");
+      spriteCanvas.save("output/sprites/"+ image_width+"_"+image_height+"_Sequence_"+sequence+".png");
+      }
+      
+      else {
+      println("Saving " + image_width+"_"+image_height+".png");
+      spriteCanvas.save("output/sprites/"+ image_width+"_"+image_height+".png"); 
+      }
       println("Saved");
 
   
@@ -193,6 +251,14 @@ void addImage(int xImage, int yImage, PGraphics canvas) {
         canvas.image(img, 0, 0);
         canvas.popMatrix();
         canvas.endDraw();
+}
+
+void getWidthHeightSprite() {
+  
+      totalImages = (endImage-startImage)/frameRateSpeed;
+      xPositions = max_width/image_width;
+      yPositions = (totalImages/xPositions)+1;
+      
 }
 
 //Switch statement to determine starting and ending image
